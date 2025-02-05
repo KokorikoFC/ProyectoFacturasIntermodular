@@ -8,12 +8,10 @@ class BillRepository {
 
     private val db = FirebaseFirestore.getInstance()
 
-    suspend fun addBill( bill: Bill): Result<Unit> {
+    suspend fun addBill(bill: Bill): Result<Unit> {
         return try {
-            db.collection("bills")
-                .document(bill.numeroFactura)
-                .collection("bills")
-                .document(bill.numeroFactura) // Usar numeroFactura como ID del documento
+            db.collection("bills") // Guarda directamente en la colección "bills"
+                .document(bill.numeroFactura) // Usa numeroFactura como ID del documento
                 .set(bill)
                 .await()
 
