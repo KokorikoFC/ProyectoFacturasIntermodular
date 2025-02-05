@@ -13,11 +13,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -41,7 +43,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     var baseImponible by remember { mutableStateOf("") }
     var iva by remember { mutableStateOf("") }
     var irpf by remember { mutableStateOf("") }
-    var total = remember (baseImponible, iva, irpf) {
+    var total = remember(baseImponible, iva, irpf) {
         billViewModel.calculateTotal(baseImponible, iva, irpf)
     }
 
@@ -59,14 +61,14 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        item{
+        item {
             Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
         }
 
 
         // Toggle Emitida / Recibida
-        item{
+        item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -97,7 +99,6 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
         }
 
 
-
         // Número de factura
         item {
             Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
@@ -105,15 +106,30 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 
         // Datos del emisor
-        item{
+        item {
             ExpandableSection(
                 title = "Datos del emisor",
                 isExpanded = isIssuerExpanded,
                 onToggle = { isIssuerExpanded = !isIssuerExpanded }
             ) {
-                OutlinedTextField(value = nombreEmisor, onValueChange = { nombreEmisor = it }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = nifEmisor, onValueChange = { nifEmisor = it }, label = { Text("NIF") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = direccionEmisor, onValueChange = { direccionEmisor = it }, label = { Text("Dirección") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = nombreEmisor,
+                    onValueChange = { nombreEmisor = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = nifEmisor,
+                    onValueChange = { nifEmisor = it },
+                    label = { Text("NIF") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = direccionEmisor,
+                    onValueChange = { direccionEmisor = it },
+                    label = { Text("Dirección") },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -121,30 +137,63 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 
         // Datos del receptor
-        item{
+        item {
             ExpandableSection(
                 title = "Datos del receptor",
                 isExpanded = isReceiverExpanded,
                 onToggle = { isReceiverExpanded = !isReceiverExpanded }
             ) {
-                OutlinedTextField(value = nombreReceptor, onValueChange = { nombreReceptor = it }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = nifReceptor, onValueChange = { nifReceptor = it }, label = { Text("NIF") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = direccionReceptor, onValueChange = { direccionReceptor = it }, label = { Text("Dirección") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = nombreReceptor,
+                    onValueChange = { nombreReceptor = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = nifReceptor,
+                    onValueChange = { nifReceptor = it },
+                    label = { Text("NIF") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = direccionReceptor,
+                    onValueChange = { direccionReceptor = it },
+                    label = { Text("Dirección") },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
 
 
         // Importes
-        item{
+        item {
             ExpandableSection(
                 title = "Importes",
                 isExpanded = isAmountsExpanded,
                 onToggle = { isAmountsExpanded = !isAmountsExpanded }
             ) {
-                OutlinedTextField(value = baseImponible, onValueChange = { baseImponible = it }, label = { Text("Base Imponible") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = iva, onValueChange = { iva = it }, label = { Text("IVA") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = irpf, onValueChange = { irpf = it }, label = { Text("IRPF") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = baseImponible,
+                    onValueChange = { baseImponible = it },
+                    label = { Text("Base Imponible") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = iva,
+                    onValueChange = { iva = it },
+                    label = { Text("IVA") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = irpf,
+                    onValueChange = { irpf = it },
+                    label = { Text("IRPF") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Text("Total: $total", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -152,7 +201,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 
         // Botón Registrar
-        item{
+        item {
             Button(
                 onClick = {
                     val fechaEmision = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
@@ -185,7 +234,12 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 // Componente para secciones plegables
 @Composable
-fun ExpandableSection(title: String, isExpanded: Boolean, onToggle: () -> Unit, content: @Composable () -> Unit) {
+fun ExpandableSection(
+    title: String,
+    isExpanded: Boolean,
+    onToggle: () -> Unit,
+    content: @Composable () -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
