@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +46,11 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     var isIssuerExpanded by remember { mutableStateOf(false) }
     var isReceiverExpanded by remember { mutableStateOf(false) }
     var isAmountsExpanded by remember { mutableStateOf(false) }
+    LaunchedEffect(
+        Unit
+    ) {
+        numeroFactura = billViewModel.generarNumeroFactura()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -91,14 +97,9 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 
         // Número de factura
-       item{
-           OutlinedTextField(
-               value = numeroFactura,
-               onValueChange = { numeroFactura = it },
-               label = { Text("Nº Factura") },
-               modifier = Modifier.fillMaxWidth()
-           )
-       }
+        item {
+            Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+        }
 
 
         // Datos del emisor
