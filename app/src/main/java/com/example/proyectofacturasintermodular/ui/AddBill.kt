@@ -129,7 +129,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             OutlinedTextField(value = baseImponible, onValueChange = { baseImponible = it }, label = { Text("Base Imponible") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = iva, onValueChange = { iva = it }, label = { Text("IVA") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = irpf, onValueChange = { irpf = it }, label = { Text("IRPF") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = total, onValueChange = { total = it }, label = { Text("Total") }, modifier = Modifier.fillMaxWidth())
+            Text("Total: ${billViewModel.calculateTotal(baseImponible, iva, irpf)}", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
         }
 
         Spacer(modifier = Modifier.height(16.dp))
