@@ -11,37 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.proyectofacturasintermodular.data.repository.BillRepository
+import com.example.proyectofacturasintermodular.ui.navigation.NavigationWrapper
 import com.example.proyectofacturasintermodular.ui.theme.ProyectoFacturasIntermodularTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         setContent {
             ProyectoFacturasIntermodularTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val navController = rememberNavController()
+                val billRepository = BillRepository() // Instancia del repositorio
+
+                NavigationWrapper(
+                    navHostController = navController,
+                    billRepository = billRepository
+                )
+
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ProyectoFacturasIntermodularTheme {
-        Greeting("Android")
     }
 }
