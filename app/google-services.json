@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "159659703361",
+    "project_id": "apptrabajadoresautonomos",
+    "storage_bucket": "apptrabajadoresautonomos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159659703361:android:47a77bd5124b31fb389ac0",
+        "android_client_info": {
+          "package_name": "com.example.proyectofacturasintermodular"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoMMV1bls82Z3aSVz19tEJOv3LA-8orz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
