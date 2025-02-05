@@ -41,7 +41,9 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     var baseImponible by remember { mutableStateOf("") }
     var iva by remember { mutableStateOf("") }
     var irpf by remember { mutableStateOf("") }
-    var total by remember { mutableStateOf("") }
+    var total = remember (baseImponible, iva, irpf) {
+        billViewModel.calculateTotal(baseImponible, iva, irpf)
+    }
 
     var isIssuerExpanded by remember { mutableStateOf(false) }
     var isReceiverExpanded by remember { mutableStateOf(false) }
@@ -143,7 +145,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 OutlinedTextField(value = baseImponible, onValueChange = { baseImponible = it }, label = { Text("Base Imponible") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = iva, onValueChange = { iva = it }, label = { Text("IVA") }, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = irpf, onValueChange = { irpf = it }, label = { Text("IRPF") }, modifier = Modifier.fillMaxWidth())
-                Text("Total: ${billViewModel.calculateTotal(baseImponible, iva, irpf)}", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+                Text("Total: $total", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -166,7 +168,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         baseImponible = baseImponible.toDoubleOrNull() ?: 0.0,
                         iva = iva.toDoubleOrNull() ?: 0.0,
                         irpf = irpf.toDoubleOrNull() ?: 0.0,
-                        total = total.toDoubleOrNull() ?: 0.0,
+                        total = total,
                         esFacturaEmitida = isIssued
                     )
                     billViewModel.addBill(bill)
