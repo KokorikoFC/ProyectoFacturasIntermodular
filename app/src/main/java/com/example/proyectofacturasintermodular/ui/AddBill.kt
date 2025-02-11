@@ -29,6 +29,7 @@ import com.example.proyectofacturasintermodular.viewmodel.BillViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) {
 
@@ -41,20 +42,27 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     var nifReceptor by remember { mutableStateOf("") }
     var direccionReceptor by remember { mutableStateOf("") }
     var baseImponible by remember { mutableStateOf("") }
-    var iva by remember { mutableStateOf("") }
     var irpf by remember { mutableStateOf("") }
-    var total = remember(baseImponible, iva, irpf) {
-        billViewModel.calculateTotal(baseImponible, iva, irpf)
+
+    // Estado para el tipo de IVA seleccionado en el Dropdown. Inicializado al primer tipo (General)
+    var ivaSeleccionadoState by remember { mutableStateOf(billViewModel.tiposIVA[0]) }
+
+    // Cálculo del total, ahora pasando el tipo de IVA seleccionado
+    var total by remember(baseImponible, irpf, ivaSeleccionadoState) {
+        mutableStateOf(billViewModel.calculateTotal(baseImponible, irpf, ivaSeleccionadoState))
     }
+
 
     var isIssuerExpanded by remember { mutableStateOf(false) }
     var isReceiverExpanded by remember { mutableStateOf(false) }
     var isAmountsExpanded by remember { mutableStateOf(false) }
-    LaunchedEffect(
-        Unit
-    ) {
+    var expandedIVA by remember { mutableStateOf(false) } // Para el Dropdown del IVA
+
+
+    LaunchedEffect(Unit) {
         numeroFactura = billViewModel.generarNumeroFactura()
     }
+
 
     LazyColumn(
         modifier = Modifier
@@ -66,8 +74,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-
-        // Toggle Emitida / Recibida
+        // Toggle Emitida / Recibida (sin cambios)
         item {
             Row(
                 modifier = Modifier
@@ -98,14 +105,12 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-
-        // Número de factura
+        // Número de factura (sin cambios)
         item {
             Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
         }
 
-
-        // Datos del emisor
+        // Datos del emisor (sin cambios)
         item {
             ExpandableSection(
                 title = "Datos del emisor",
@@ -132,11 +137,9 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-
         }
 
-
-        // Datos del receptor
+        // Datos del receptor (sin cambios)
         item {
             ExpandableSection(
                 title = "Datos del receptor",
@@ -165,8 +168,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-
-        // Importes
+        // Importes (Modificado para Dropdown de IVA)
         item {
             ExpandableSection(
                 title = "Importes",
@@ -180,13 +182,44 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = iva,
-                    onValueChange = { iva = it },
-                    label = { Text("IVA") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
+
+                // Dropdown para seleccionar el tipo de IVA
+                ExposedDropdownMenuBox(
+                    expanded = expandedIVA,
+                    onExpandedChange = { expandedIVA = !expandedIVA }
+                ) {
+                    OutlinedTextField(
+                        readOnly = true,
+                        value = ivaSeleccionadoState.nombre, // Muestra el nombre del IVA seleccionado
+                        onValueChange = { },
+                        label = { Text("Tipo IVA") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expandedIVA
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedIVA,
+                        onDismissRequest = { expandedIVA = false }
+                    ) {
+                        billViewModel.tiposIVA.forEach { tipoIVA ->
+                            DropdownMenuItem(
+                                text = { Text(text = "${tipoIVA.nombre} (${tipoIVA.porcentaje}%)") },
+                                onClick = {
+                                    ivaSeleccionadoState = tipoIVA // Actualiza el estado del IVA seleccionado
+                                    billViewModel.actualizarIvaSeleccionado(tipoIVA) // Actualiza en el ViewModel
+                                    expandedIVA = false
+                                    total = billViewModel.calculateTotal(baseImponible, irpf, ivaSeleccionadoState) // Recalcula el total DIRECTAMENTE
+                                }
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = irpf,
                     onValueChange = { irpf = it },
@@ -194,13 +227,13 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("Total: $total", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+                Text("Total: ${String.format("%.2f", total)} €", // Formato para 2 decimales y símbolo €
+                    fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-
-        // Botón Registrar
+        // Botón Registrar (sin cambios)
         item {
             Button(
                 onClick = {
@@ -215,7 +248,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         nifReceptor = nifReceptor,
                         direccionReceptor = direccionReceptor,
                         baseImponible = baseImponible.toDoubleOrNull() ?: 0.0,
-                        iva = iva.toDoubleOrNull() ?: 0.0,
+                        iva = ivaSeleccionadoState.porcentaje, // Guardamos el porcentaje del IVA seleccionado
                         irpf = irpf.toDoubleOrNull() ?: 0.0,
                         total = total,
                         esFacturaEmitida = isIssued
@@ -232,7 +265,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 }
 
 
-// Componente para secciones plegables
+// Componente para secciones plegables (sin cambios)
 @Composable
 fun ExpandableSection(
     title: String,
