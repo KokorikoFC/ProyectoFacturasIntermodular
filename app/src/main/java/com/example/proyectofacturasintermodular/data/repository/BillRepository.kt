@@ -11,7 +11,7 @@ class BillRepository {
     suspend fun addBill(bill: Bill): Result<Unit> {
         return try {
             db.collection("bills") // Guarda directamente en la colección "bills"
-                .document(bill.numeroFactura) // Usa numeroFactura como ID del documento
+                .document(bill.numeroFactura!!) // Usa numeroFactura como ID del documento
                 .set(bill)
                 .await()
 

@@ -7,6 +7,7 @@ import com.example.proyectofacturasintermodular.data.repository.BillRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.Locale
 
 class BillViewModel : ViewModel() {
 
@@ -41,6 +42,7 @@ class BillViewModel : ViewModel() {
         return base + (base * ivaValue / 100) - (base * irpfValue / 100)
     }
 
+    // Función para generar un código alfanumérico aleatorio (ya no se usa para el número de factura)
     fun generarCodigoAlfanumerico(longitud: Int = 6): String {
         val caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return (1..longitud)
@@ -51,22 +53,59 @@ class BillViewModel : ViewModel() {
     suspend fun generarNumeroFactura(): String {
         var numeroFactura: String
         var existe: Boolean
+        val prefijoFactura = "FAC-"
 
         do {
-            val nuevoCodigo = generarCodigoAlfanumerico()
-            numeroFactura = "NFAC-$nuevoCodigo"
+            val lastBill = getLastBill()
+            println("generarNumeroFactura: getLastBill devolvió: ${lastBill?.numeroFactura}") // Log
 
-            // Consultamos en Firebase si ya existe
+            val nextNumber = if (lastBill != null) {
+                val lastId = lastBill.numeroFactura?.removePrefix(prefijoFactura) ?: "0"
+                val number = lastId.toIntOrNull() ?: 0
+                number + 1
+            } else {
+                1
+            }
+            val formattedNumber = String.format(Locale.getDefault(), "%05d", nextNumber)
+            numeroFactura = prefijoFactura + formattedNumber
+            println("generarNumeroFactura: Número de factura generado: $numeroFactura") // Log
+
+
+            // Consultamos en Firebase si ya existe (aunque con el nuevo método no debería existir duplicados)
             val documentos = db.collection("bills")
                 .whereEqualTo("numeroFactura", numeroFactura)
                 .get()
-                .await() // Esperamos la respuesta sin usar callback
+                .await()
 
             existe = !documentos.isEmpty
-        } while (existe) // Si ya existe, generamos otro
+        } while (existe)
 
         return numeroFactura
     }
+
+
+    private suspend fun getLastBill(): Bill? {
+        return try {
+            val querySnapshot = db.collection("bills")
+                .orderBy("numeroFactura", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val bill = querySnapshot.documents.firstOrNull()?.toObject(Bill::class.java)
+                println("getLastBill: Última factura encontrada: ${bill?.numeroFactura}") // Log
+                bill
+            } else {
+                println("getLastBill: No se encontraron facturas.") // Log
+                null
+            }
+        } catch (e: Exception) {
+            println("getLastBill: Error al obtener la última factura: ${e.message}") // Log de error
+            null
+        }
+    }
+
 
     // Función para establecer el tipo de IVA seleccionado desde la UI
     fun actualizarIvaSeleccionado(tipoIVA: TipoIVA) {
