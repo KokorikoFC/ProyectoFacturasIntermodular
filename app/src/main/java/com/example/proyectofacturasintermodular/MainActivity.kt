@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectofacturasintermodular.ui.navigation.NavigationWrapper
 import com.example.proyectofacturasintermodular.ui.theme.ProyectoFacturasIntermodularTheme
+import com.example.proyectofacturasintermodular.viewmodel.AuthViewModel
 import com.example.proyectofacturasintermodular.viewmodel.BillViewModel
 
 class MainActivity : ComponentActivity() {
@@ -14,12 +15,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ProyectoFacturasIntermodularTheme {
+                val authViewModel = AuthViewModel()
                 val navController = rememberNavController()
                 val billViewModel = BillViewModel()
 
                 NavigationWrapper(
                     navHostController = navController,
-                    billViewModel = billViewModel
+                    billViewModel = billViewModel,
+                    authViewModel = authViewModel
                 )
 
             }
