@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,14 @@ import com.example.proyectofacturasintermodular.viewmodel.BillViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.proyectofacturasintermodular.R // Asegúrate de que R se importa correctamente
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,229 +99,212 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
         ) {
-            item {
-                Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = "Background",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(bottom = 50.dp, start = 24.dp, end = 24.dp, top = 24.dp)
+                    .background(Color.White.copy(alpha = 0.9f), RoundedCornerShape(20.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = 60.dp) // espacio para el botón inferior
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
 
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.LightGray, RoundedCornerShape(8.dp))
-                        .padding(4.dp)
-                ) {
-                    Button(
-                        onClick = { isIssued = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isIssued) Color.Blue else Color.Gray
-                        ),
-                        modifier = Modifier.weight(1f)
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Emitida", color = Color.White)
-                    }
-
-                    Button(
-                        onClick = { isIssued = false },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (!isIssued) Color.Blue else Color.Gray
-                        ),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Recibida", color = Color.White)
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            item {
-                if (isIssued) {
-                    Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
-                } else {
-                    OutlinedTextField(
-                        value = numeroFacturaManualState,
-                        onValueChange = { numeroFacturaManualState = it },
-                        label = { Text("ID Factura (Recibida)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            item {
-                ExpandableSection(
-                    title = "Datos del emisor",
-                    isExpanded = isIssuerExpanded,
-                    onToggle = { isIssuerExpanded = !isIssuerExpanded }
-                ) {
-                    OutlinedTextField(
-                        value = nombreEmisor,
-                        onValueChange = { nombreEmisor = it },
-                        label = { Text("Nombre") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = nifEmisor,
-                        onValueChange = { nifEmisor = it },
-                        label = { Text("NIF") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = direccionEmisor,
-                        onValueChange = { direccionEmisor = it },
-                        label = { Text("Dirección") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            item {
-                ExpandableSection(
-                    title = "Datos del receptor",
-                    isExpanded = isReceiverExpanded,
-                    onToggle = { isReceiverExpanded = !isReceiverExpanded }
-                ) {
-                    OutlinedTextField(
-                        value = nombreReceptor,
-                        onValueChange = { nombreReceptor = it },
-                        label = { Text("Nombre") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = nifReceptor,
-                        onValueChange = { nifReceptor = it },
-                        label = { Text("NIF") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = direccionReceptor,
-                        onValueChange = { direccionReceptor = it },
-                        label = { Text("Dirección") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
-            item {
-                ExpandableSection(
-                    title = "Importes",
-                    isExpanded = isAmountsExpanded,
-                    onToggle = { isAmountsExpanded = !isAmountsExpanded }
-                ) {
-                    OutlinedTextField(
-                        value = baseImponible,
-                        onValueChange = { baseImponible = it },
-                        label = { Text("Base Imponible") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    ExposedDropdownMenuBox(
-                        expanded = expandedIVA,
-                        onExpandedChange = { expandedIVA = !expandedIVA }
-                    ) {
-                        OutlinedTextField(
-                            readOnly = true,
-                            value = ivaSeleccionadoState.nombre,
-                            onValueChange = { },
-                            label = { Text("Tipo IVA") },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = expandedIVA
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor()
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expandedIVA,
-                            onDismissRequest = { expandedIVA = false }
+                        Button(
+                            onClick = { isIssued = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isIssued) Color.Blue else Color.LightGray
+                            ),
+                            shape = RoundedCornerShape(8.dp)
                         ) {
-                            billViewModel.tiposIVA.forEach { tipoIVA ->
-                                DropdownMenuItem(
-                                    text = { Text(text = "${tipoIVA.nombre} (${tipoIVA.porcentaje}%)") },
-                                    onClick = {
-                                        ivaSeleccionadoState = tipoIVA
-                                        billViewModel.actualizarIvaSeleccionado(tipoIVA)
-                                        expandedIVA = false
-                                        total = billViewModel.calculateTotal(baseImponible, irpf, ivaSeleccionadoState)
-                                    }
-                                )
-                            }
+                            Text("Emitida", color = Color.White)
+                        }
+
+                        Button(
+                            onClick = { isIssued = false },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (!isIssued) Color.Blue else Color.LightGray
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("Recibida", color = Color.White)
                         }
                     }
-
-                    OutlinedTextField(
-                        value = irpf,
-                        onValueChange = { irpf = it },
-                        label = { Text("IRPF") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text("Total: ${String.format("%.2f", total)} €",
-                        fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            item {
-                Button(
-                    onClick = {
-                        if (
-                            (isIssued && nombreEmisor.isNotEmpty() && nifEmisor.isNotEmpty() && direccionEmisor.isNotEmpty() && nombreReceptor.isNotEmpty() && nifReceptor.isNotEmpty() && direccionReceptor.isNotEmpty() && baseImponible.isNotEmpty() && irpf.isNotEmpty()) ||
-                            (!isIssued && numeroFacturaManualState.isNotEmpty() && nombreEmisor.isNotEmpty() && nifEmisor.isNotEmpty() && direccionEmisor.isNotEmpty() && nombreReceptor.isNotEmpty() && nifReceptor.isNotEmpty() && direccionReceptor.isNotEmpty() && baseImponible.isNotEmpty() && irpf.isNotEmpty())
-                        ) {
-                            val fechaEmision = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-                            val billIdToUse = if (isIssued) numeroFactura else numeroFacturaManualState
-                            val bill = Bill(
-                                numeroFactura = billIdToUse,
-                                fechaEmision = fechaEmision,
-                                empresaEmisor = nombreEmisor,
-                                nifEmisor = nifEmisor,
-                                direccionEmisor = direccionEmisor,
-                                clienteReceptor = nombreReceptor,
-                                nifReceptor = nifReceptor,
-                                direccionReceptor = direccionReceptor,
-                                baseImponible = baseImponible.toDoubleOrNull() ?: 0.0,
-                                iva = ivaSeleccionadoState.porcentaje,
-                                irpf = irpf.toDoubleOrNull() ?: 0.0,
-                                total = total,
-                                esFacturaEmitida = isIssued
+                item {
+                    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                        if (isIssued) {
+                            Text("Factura N°: $numeroFactura", fontSize = 18.sp, color = Color.Black)
+                        } else {
+                            OutlinedTextField(
+                                value = numeroFacturaManualState,
+                                onValueChange = { numeroFacturaManualState = it },
+                                label = { Text("Factura N° (Recibida)", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(8.dp)
                             )
-                            billViewModel.addBill(bill)
 
-                            resetFields() // Limpiar campos
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
-                            if (isIssued) {
-                                coroutineScope.launch {
-                                    numeroFactura = billViewModel.generarNumeroFactura() // Actualizar numeroFactura para emitidas
+                item {
+                    ExpandableSectionStyle(
+                        title = "Datos del emisor",
+                        isExpanded = isIssuerExpanded,
+                        onToggle = { isIssuerExpanded = !isIssuerExpanded }
+                    ) {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                            OutlinedTextFieldStyle(
+                                value = nombreEmisor,
+                                onValueChange = { nombreEmisor = it },
+                                label = { Text("Empresa:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextFieldStyle(
+                                value = nifEmisor,
+                                onValueChange = { nifEmisor = it },
+                                label = { Text("NIF:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextFieldStyle(
+                                value = direccionEmisor,
+                                onValueChange = { direccionEmisor = it },
+                                label = { Text("Dirección:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
+                item {
+                    ExpandableSectionStyle(
+                        title = "Datos del receptor",
+                        isExpanded = isReceiverExpanded,
+                        onToggle = { isReceiverExpanded = !isReceiverExpanded }
+                    ) {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                            OutlinedTextFieldStyle(
+                                value = nombreReceptor,
+                                onValueChange = { nombreReceptor = it },
+                                label = { Text("Cliente:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextFieldStyle(
+                                value = nifReceptor,
+                                onValueChange = { nifReceptor = it },
+                                label = { Text("NIF/CIF:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextFieldStyle(
+                                value = direccionReceptor,
+                                onValueChange = { direccionReceptor = it },
+                                label = { Text("Dirección:", color = Color.Black) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+
+                item {
+                    ExpandableSectionStyle(
+                        title = "Importes",
+                        isExpanded = isAmountsExpanded,
+                        onToggle = { isAmountsExpanded = !isAmountsExpanded }
+                    ) {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                            OutlinedTextFieldStyle(
+                                value = baseImponible,
+                                onValueChange = { baseImponible = it },
+                                label = { Text("Base imponible:", color = Color.Black) },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            ExposedDropdownMenuBox(
+                                expanded = expandedIVA,
+                                onExpandedChange = { expandedIVA = !expandedIVA }
+                            ) {
+                                OutlinedTextFieldStyle( // Apply style here as well for consistency
+                                    value = ivaSeleccionadoState.nombre,
+                                    onValueChange = { },
+                                    label = { Text("IVA:", color = Color.Black) },
+                                    readOnly = true, // Add readOnly parameter
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedIVA) }, // Add trailingIcon parameter
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor()
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expandedIVA,
+                                    onDismissRequest = { expandedIVA = false }
+                                ) {
+                                    billViewModel.tiposIVA.forEach { tipoIVA ->
+                                        DropdownMenuItem(
+                                            text = { Text(text = "${tipoIVA.nombre} (${tipoIVA.porcentaje}%)", color = Color.Black) },
+                                            onClick = {
+                                                ivaSeleccionadoState = tipoIVA
+                                                billViewModel.actualizarIvaSeleccionado(tipoIVA)
+                                                expandedIVA = false
+                                                total = billViewModel.calculateTotal(baseImponible, irpf, ivaSeleccionadoState)
+                                            }
+                                        )
+                                    }
                                 }
                             }
 
-                            snackbarMessage = "Factura registrada correctamente"
-                            showSnackbar = true
-
-                        } else {
-                            snackbarMessage = "Por favor, rellena todos los campos."
-                            showSnackbar = true
+                            OutlinedTextFieldStyle(
+                                value = irpf,
+                                onValueChange = { irpf = it },
+                                label = { Text("IRPF:", color = Color.Black) },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Text("Total: ${String.format("%.2f", total)} €",
+                                fontSize = 20.sp, modifier = Modifier.fillMaxWidth(), color = Color.Black, fontWeight = FontWeight.Bold)
                         }
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(snackbarMessage)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text("Registrar", fontSize = 16.sp)
+                    }
+                    Spacer(modifier = Modifier.height(25.dp))
                 }
+
+
+            }
+            Button(
+                onClick = {
+                    //TODO: Guardar factura y mostrar mensaje de éxito o error
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text("Añadir Factura", color = Color.White)
             }
         }
     }
@@ -320,7 +312,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
 
 @Composable
-fun ExpandableSection(
+fun ExpandableSectionStyle(
     title: String,
     isExpanded: Boolean,
     onToggle: () -> Unit,
@@ -331,14 +323,45 @@ fun ExpandableSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onToggle() }
-                .padding(8.dp),
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Icon(
+                imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                contentDescription = if (isExpanded) "Contraer" else "Expandir",
+                tint = Color.Black
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
         }
         if (isExpanded) {
-            Column(modifier = Modifier.padding(8.dp)) {
+            Column(modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)) {
                 content()
             }
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OutlinedTextFieldStyle(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    readOnly: Boolean = false,
+    trailingIcon: @Composable (() -> Unit)? = null
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = label,
+        modifier = modifier.padding(bottom = 8.dp),
+        keyboardOptions = keyboardOptions,
+        shape = RoundedCornerShape(8.dp),
+        readOnly = readOnly,
+        trailingIcon = trailingIcon
+    )
 }
