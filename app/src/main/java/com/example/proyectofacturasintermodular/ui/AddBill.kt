@@ -35,6 +35,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
 
     var isIssued by remember { mutableStateOf(true) }
     var numeroFactura by remember { mutableStateOf("") }
+    var numeroFacturaManualState by remember { mutableStateOf("") } // Nuevo estado para ID manual
     var nombreEmisor by remember { mutableStateOf("") }
     var nifEmisor by remember { mutableStateOf("") }
     var direccionEmisor by remember { mutableStateOf("") }
@@ -59,8 +60,12 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     var expandedIVA by remember { mutableStateOf(false) } // Para el Dropdown del IVA
 
 
-    LaunchedEffect(Unit) {
-        numeroFactura = billViewModel.generarNumeroFactura()
+    LaunchedEffect(isIssued) {
+        if (isIssued) {
+            numeroFactura = billViewModel.generarNumeroFactura() // ID automático para EMITIDAS (ahora aleatorio)
+        } else {
+            numeroFactura = "" // ID vacío inicialmente para RECIBIDAS (se usará el manual)
+        }
     }
 
 
@@ -105,9 +110,20 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // Número de factura (sin cambios)
+        // ID Factura: Condicional Text o TextField
         item {
-            Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+            if (isIssued) {
+                // Mostrar ID automático (para emitidas)
+                Text("ID Factura: $numeroFactura", fontSize = 16.sp, modifier = Modifier.fillMaxWidth())
+            } else {
+                // Mostrar TextField para ID manual (para recibidas)
+                OutlinedTextField(
+                    value = numeroFacturaManualState,
+                    onValueChange = { numeroFacturaManualState = it },
+                    label = { Text("ID Factura (Recibida)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
         // Datos del emisor (sin cambios)
@@ -233,13 +249,14 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Botón Registrar (sin cambios)
+        // Botón Registrar (Modificado para usar ID manual si es recibida)
         item {
             Button(
                 onClick = {
                     val fechaEmision = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+                    val billIdToUse = if (isIssued) numeroFactura else numeroFacturaManualState // ID condicional
                     val bill = Bill(
-                        numeroFactura = numeroFactura,
+                        numeroFactura = billIdToUse, // Usamos el ID condicional
                         fechaEmision = fechaEmision,
                         empresaEmisor = nombreEmisor,
                         nifEmisor = nifEmisor,
@@ -248,7 +265,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         nifReceptor = nifReceptor,
                         direccionReceptor = direccionReceptor,
                         baseImponible = baseImponible.toDoubleOrNull() ?: 0.0,
-                        iva = ivaSeleccionadoState.porcentaje, // Guardamos el porcentaje del IVA seleccionado
+                        iva = ivaSeleccionadoState.porcentaje,
                         irpf = irpf.toDoubleOrNull() ?: 0.0,
                         total = total,
                         esFacturaEmitida = isIssued
