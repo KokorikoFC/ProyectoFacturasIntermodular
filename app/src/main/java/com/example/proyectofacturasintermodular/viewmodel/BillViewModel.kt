@@ -57,7 +57,7 @@ class BillViewModel : ViewModel() {
             numeroFactura = "NFAC-$nuevoCodigo"
 
             // Consultamos en Firebase si ya existe
-            val documentos = db.collection("facturas")
+            val documentos = db.collection("bills")
                 .whereEqualTo("numeroFactura", numeroFactura)
                 .get()
                 .await() // Esperamos la respuesta sin usar callback
