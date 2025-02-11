@@ -38,6 +38,10 @@ import com.example.proyectofacturasintermodular.R // Asegúrate de que R se impo
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.core.app.NotificationCompat.Style
+import com.example.proyectofacturasintermodular.ui.theme.Beige
+import com.example.proyectofacturasintermodular.ui.theme.Gray
+import com.example.proyectofacturasintermodular.ui.theme.Red
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,13 +118,13 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(bottom = 50.dp, start = 24.dp, end = 24.dp, top = 24.dp)
-                    .background(Color.White.copy(alpha = 0.9f), RoundedCornerShape(20.dp)),
+                    .background(Gray, RoundedCornerShape(20.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(bottom = 60.dp) // espacio para el botón inferior
             ) {
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                    Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Beige)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
@@ -134,7 +138,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         Button(
                             onClick = { isIssued = true },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isIssued) Color.Blue else Color.LightGray
+                                containerColor = if (isIssued) Red else Beige
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
@@ -144,7 +148,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         Button(
                             onClick = { isIssued = false },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (!isIssued) Color.Blue else Color.LightGray
+                                containerColor = if (!isIssued) Red else Beige
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
@@ -157,7 +161,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 item {
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         if (isIssued) {
-                            Text("Factura N°: $numeroFactura", fontSize = 18.sp, color = Color.Black)
+                            Text("Factura N°: $numeroFactura", fontSize = 18.sp, color = Beige)
                         } else {
                             OutlinedTextField(
                                 value = numeroFacturaManualState,
