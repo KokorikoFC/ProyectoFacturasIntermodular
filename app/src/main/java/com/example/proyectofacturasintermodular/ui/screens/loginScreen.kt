@@ -49,34 +49,35 @@ fun LoginScreen(navHostController: NavHostController, authViewModel: AuthViewMod
             painter = painterResource(id = R.drawable.background2),
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
 
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 50.dp),
+                .padding(top = 70.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Inicia sesión",
-                    style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Beige)
+                    style = TextStyle(fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Beige)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(50.dp))
                 Text(
                     text = "Debes iniciar sesión para poder registrar una factura",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Beige
+                        color = Beige,
+                        textAlign = TextAlign.Center
                     ),
-                    textAlign = TextAlign.Justify,
                     lineHeight = 30.sp
                 )
             }
@@ -231,7 +232,7 @@ fun LoginScreen(navHostController: NavHostController, authViewModel: AuthViewMod
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Gray
+                            color = Beige
                         )
                     )
                 }
