@@ -228,7 +228,7 @@ fun LoginScreen(navHostController: NavHostController, authViewModel: AuthViewMod
                 ) {
                     Text(
                         text = "Iniciar sesión",
-                        color = Gray,
+                        color = Color.White,
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontWeight = FontWeight.SemiBold,

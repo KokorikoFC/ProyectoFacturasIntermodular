@@ -117,14 +117,19 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(bottom = 50.dp, start = 24.dp, end = 24.dp, top = 24.dp)
+                    .padding(bottom = 100.dp, start = 24.dp, end = 24.dp, top = 24.dp)
                     .background(Gray, RoundedCornerShape(20.dp)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(bottom = 60.dp) // espacio para el botón inferior
             ) {
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text("Añadir Factura", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Beige)
+                    Text(
+                        "Añadir Factura",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Beige
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
@@ -142,7 +147,7 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Emitida", color = Color.White)
+                            Text("Emitida", color = if (isIssued) Beige else Gray)
                         }
 
                         Button(
@@ -152,25 +157,23 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                             ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("Recibida", color = Color.White)
+                            Text("Recibida", color = if (!isIssued) Beige else Gray)
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
                 item {
+
                     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         if (isIssued) {
                             Text("Factura N°: $numeroFactura", fontSize = 18.sp, color = Beige)
                         } else {
-                            OutlinedTextField(
+                            StyledOutlinedTextField(
                                 value = numeroFacturaManualState,
                                 onValueChange = { numeroFacturaManualState = it },
-                                label = { Text("Factura N° (Recibida)", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(8.dp)
+                                placeholder = { Text("Factura N° (Recibida)") }
                             )
-
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -183,24 +186,24 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         onToggle = { isIssuerExpanded = !isIssuerExpanded }
                     ) {
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = nombreEmisor,
                                 onValueChange = { nombreEmisor = it },
-                                label = { Text("Empresa:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("Empresa:") }
                             )
-                            OutlinedTextFieldStyle(
+
+                            StyledOutlinedTextField(
                                 value = nifEmisor,
                                 onValueChange = { nifEmisor = it },
-                                label = { Text("NIF:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("NIF:") }
                             )
-                            OutlinedTextFieldStyle(
+
+                            StyledOutlinedTextField(
                                 value = direccionEmisor,
                                 onValueChange = { direccionEmisor = it },
-                                label = { Text("Dirección:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("Dirección:") }
                             )
+
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -213,23 +216,20 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         onToggle = { isReceiverExpanded = !isReceiverExpanded }
                     ) {
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = nombreReceptor,
                                 onValueChange = { nombreReceptor = it },
-                                label = { Text("Cliente:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("Cliente:") }
                             )
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = nifReceptor,
                                 onValueChange = { nifReceptor = it },
-                                label = { Text("NIF/CIF:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("NIF/CIF:") }
                             )
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = direccionReceptor,
                                 onValueChange = { direccionReceptor = it },
-                                label = { Text("Dirección:", color = Color.Black) },
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("Dirección:") }
                             )
                         }
                     }
@@ -243,27 +243,28 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                         onToggle = { isAmountsExpanded = !isAmountsExpanded }
                     ) {
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = baseImponible,
                                 onValueChange = { baseImponible = it },
-                                label = { Text("Base imponible:", color = Color.Black) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("Base imponible:") }
                             )
-
                             ExposedDropdownMenuBox(
                                 expanded = expandedIVA,
                                 onExpandedChange = { expandedIVA = !expandedIVA }
                             ) {
-                                OutlinedTextFieldStyle( // Apply style here as well for consistency
+                                OutlinedTextFieldStyle(
                                     value = ivaSeleccionadoState.nombre,
                                     onValueChange = { },
-                                    label = { Text("IVA:", color = Color.Black) },
-                                    readOnly = true, // Add readOnly parameter
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedIVA) }, // Add trailingIcon parameter
+                                    label = { Text("IVA:", color = Beige) },
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expandedIVA
+                                        )
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .menuAnchor()
+                                        .menuAnchor(),
                                 )
                                 ExposedDropdownMenu(
                                     expanded = expandedIVA,
@@ -271,27 +272,38 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                                 ) {
                                     billViewModel.tiposIVA.forEach { tipoIVA ->
                                         DropdownMenuItem(
-                                            text = { Text(text = "${tipoIVA.nombre} (${tipoIVA.porcentaje}%)", color = Color.Black) },
+                                            text = {
+                                                Text(
+                                                    text = "${tipoIVA.nombre} (${tipoIVA.porcentaje}%)",
+                                                    color = Gray
+                                                )
+                                            },
                                             onClick = {
                                                 ivaSeleccionadoState = tipoIVA
                                                 billViewModel.actualizarIvaSeleccionado(tipoIVA)
                                                 expandedIVA = false
-                                                total = billViewModel.calculateTotal(baseImponible, irpf, ivaSeleccionadoState)
+                                                total = billViewModel.calculateTotal(
+                                                    baseImponible,
+                                                    irpf,
+                                                    ivaSeleccionadoState
+                                                )
                                             }
                                         )
                                     }
                                 }
                             }
-
-                            OutlinedTextFieldStyle(
+                            StyledOutlinedTextField(
                                 value = irpf,
                                 onValueChange = { irpf = it },
-                                label = { Text("IRPF:", color = Color.Black) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
+                                placeholder = { Text("IRPF:") }
                             )
-                            Text("Total: ${String.format("%.2f", total)} €",
-                                fontSize = 20.sp, modifier = Modifier.fillMaxWidth(), color = Color.Black, fontWeight = FontWeight.Bold)
+                            Text(
+                                "Total: ${String.format("%.2f", total)} €",
+                                fontSize = 20.sp,
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Beige,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(25.dp))
@@ -301,11 +313,10 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             }
             Button(
                 onClick = {
-                    //TODO: Guardar factura y mostrar mensaje de éxito o error
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp),
+                    .padding(20.dp).fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text("Añadir Factura", color = Color.White)
@@ -327,19 +338,26 @@ fun ExpandableSectionStyle(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onToggle() }
-                .padding(vertical = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                 contentDescription = if (isExpanded) "Contraer" else "Expandir",
-                tint = Color.Black
+                tint = Beige
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Beige)
         }
         if (isExpanded) {
-            Column(modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)) {
+            Column(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    top = 8.dp,
+                    bottom = 8.dp,
+                    end = 16.dp
+                )
+            ) {
                 content()
             }
         }
@@ -366,6 +384,49 @@ fun OutlinedTextFieldStyle(
         keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(8.dp),
         readOnly = readOnly,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Beige,
+            unfocusedTextColor = Beige
+        )
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StyledOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    singleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Beige, shape = RoundedCornerShape(8.dp))
+            .padding(2.dp)
+    ) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = placeholder,
+            singleLine = singleLine,
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = keyboardOptions,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                focusedTextColor = Gray,
+                unfocusedTextColor = Gray,
+                focusedPlaceholderColor = Color.Gray,
+                unfocusedPlaceholderColor = Color.Gray,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
+            )
+        )
+
+    }
+    Spacer(modifier = Modifier.height(20.dp))
 }
