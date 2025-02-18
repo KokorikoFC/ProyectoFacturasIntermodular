@@ -23,5 +23,7 @@ data class Bill(
     val total: Double? = 0.0, // Valor por defecto 0.0
 
     // Datos adicionales
-    val esFacturaEmitida: Boolean? = false // Valor por defecto false
+    val esFacturaEmitida: Boolean? = false, // Valor por defecto false
+
+    val idProject : String? = null
 )

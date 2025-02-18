@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.proyectofacturasintermodular.data.model.Bill
 import com.example.proyectofacturasintermodular.data.repository.BillRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth // Importa FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
@@ -13,6 +14,8 @@ class BillViewModel : ViewModel() {
 
     private val repository = BillRepository()
     val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance() // Obtén la instancia de FirebaseAuth
+
 
     // Definimos los tipos de IVA como una lista de Data Classes
     data class TipoIVA(val nombre: String, val porcentaje: Double)
@@ -54,9 +57,17 @@ class BillViewModel : ViewModel() {
         var numeroFactura: String
         var existe: Boolean
         val prefijoFactura = "FAC-"
+        val userId = auth.currentUser?.uid // Obtén el UID del usuario autenticado
+
+
+        if (userId == null) {
+            // Manejar el caso en que no hay usuario autenticado
+            return "ERROR-USUARIO-NO-AUTENTICADO" // O lanza una excepción, según tu lógica
+        }
+
 
         do {
-            val lastBill = getLastBill()
+            val lastBill = getLastBill(userId) // Pasa userId a getLastBill
             println("generarNumeroFactura: getLastBill devolvió: ${lastBill?.numeroFactura}") // Log
 
             val nextNumber = if (lastBill != null) {
@@ -71,8 +82,9 @@ class BillViewModel : ViewModel() {
             println("generarNumeroFactura: Número de factura generado: $numeroFactura") // Log
 
 
-            // Consultamos en Firebase si ya existe (aunque con el nuevo método no debería existir duplicados)
-            val documentos = db.collection("bills")
+            // Consultamos en Firebase si ya existe en la colección del usuario
+            val documentos = db.collection("user").document(userId)
+                .collection("bill") // Consulta la subcolección "bill" del usuario
                 .whereEqualTo("numeroFactura", numeroFactura)
                 .get()
                 .await()
@@ -84,9 +96,10 @@ class BillViewModel : ViewModel() {
     }
 
 
-    private suspend fun getLastBill(): Bill? {
+    private suspend fun getLastBill(userId: String): Bill? { // Recibe userId como parámetro
         return try {
-            val querySnapshot = db.collection("bills")
+            val querySnapshot = db.collection("user").document(userId)
+                .collection("bill") // Consulta la subcolección "bill" del usuario
                 .orderBy("numeroFactura", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .limit(1)
                 .get()
@@ -97,7 +110,7 @@ class BillViewModel : ViewModel() {
                 println("getLastBill: Última factura encontrada: ${bill?.numeroFactura}") // Log
                 bill
             } else {
-                println("getLastBill: No se encontraron facturas.") // Log
+                println("getLastBill: No se encontraron facturas para el usuario.") // Log
                 null
             }
         } catch (e: Exception) {
