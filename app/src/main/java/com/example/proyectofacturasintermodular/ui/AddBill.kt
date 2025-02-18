@@ -313,6 +313,23 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             }
             Button(
                 onClick = {
+                billViewModel.addBill(
+                    Bill(
+                        numeroFactura = if (isIssued) numeroFactura else numeroFacturaManualState,
+                        fechaEmision = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        empresaEmisor = nombreEmisor,
+                        nifEmisor = nifEmisor,
+                        direccionEmisor = direccionEmisor,
+                        clienteReceptor = nombreReceptor,
+                        nifReceptor = nifReceptor,
+                        direccionReceptor = direccionReceptor,
+                        baseImponible = baseImponible.toDoubleOrNull(),
+                        iva = ivaSeleccionadoState.porcentaje,
+                        irpf = irpf.toDoubleOrNull(),
+                        total = total,
+                        esFacturaEmitida = isIssued
+                    )
+                )
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
