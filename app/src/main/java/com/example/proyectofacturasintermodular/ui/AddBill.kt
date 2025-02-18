@@ -76,22 +76,30 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    // State para forzar la recomposición
+    var recomposeTrigger by remember { mutableStateOf(false) }
+
     // Función para resetear los campos
     fun resetFields() {
-        numeroFacturaManualState = ""
-        nombreEmisor = ""
-        nifEmisor = ""
-        direccionEmisor = ""
-        nombreReceptor = ""
-        nifReceptor = ""
-        direccionReceptor = ""
-        baseImponible = ""
-        irpf = ""
-        total = 0.0
+        coroutineScope.launch {
+            numeroFacturaManualState = ""
+            nombreEmisor = ""
+            nifEmisor = ""
+            direccionEmisor = ""
+            nombreReceptor = ""
+            nifReceptor = ""
+            direccionReceptor = ""
+            baseImponible = ""
+            irpf = ""
+            total = 0.0
+            isIssued = true
+            numeroFactura = billViewModel.generarNumeroFactura() // Generar nuevo número aquí dentro de la corrutina
+            recomposeTrigger = !recomposeTrigger // Forzar recomposición
+        }
     }
 
 
-    LaunchedEffect(isIssued) {
+    LaunchedEffect(recomposeTrigger, isIssued) { // Añadimos recomposeTrigger como clave y volvemos a añadir isIssued
         if (isIssued) {
             numeroFactura = billViewModel.generarNumeroFactura()
         } else {
@@ -313,23 +321,28 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
             }
             Button(
                 onClick = {
-                billViewModel.addBill(
-                    Bill(
-                        numeroFactura = if (isIssued) numeroFactura else numeroFacturaManualState,
-                        fechaEmision = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        empresaEmisor = nombreEmisor,
-                        nifEmisor = nifEmisor,
-                        direccionEmisor = direccionEmisor,
-                        clienteReceptor = nombreReceptor,
-                        nifReceptor = nifReceptor,
-                        direccionReceptor = direccionReceptor,
-                        baseImponible = baseImponible.toDoubleOrNull(),
-                        iva = ivaSeleccionadoState.porcentaje,
-                        irpf = irpf.toDoubleOrNull(),
-                        total = total,
-                        esFacturaEmitida = isIssued
-                    )
-                )
+                    coroutineScope.launch {
+                        billViewModel.addBill(
+                            Bill(
+                                numeroFactura = if (isIssued) numeroFactura else numeroFacturaManualState,
+                                fechaEmision = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                                empresaEmisor = nombreEmisor,
+                                nifEmisor = nifEmisor,
+                                direccionEmisor = direccionEmisor,
+                                clienteReceptor = nombreReceptor,
+                                nifReceptor = nifReceptor,
+                                direccionReceptor = direccionReceptor,
+                                baseImponible = baseImponible.toDoubleOrNull(),
+                                iva = ivaSeleccionadoState.porcentaje,
+                                irpf = irpf.toDoubleOrNull(),
+                                total = total,
+                                esFacturaEmitida = isIssued
+                            )
+                        )
+                        snackbarMessage = "Factura añadida correctamente"
+                        showSnackbar = true
+                        resetFields()
+                    }
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -337,6 +350,14 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text("Añadir Factura", color = Color.White)
+            }
+        }
+        if (showSnackbar) {
+            LaunchedEffect(showSnackbar) {
+                if (showSnackbar) {
+                    snackbarHostState.showSnackbar(snackbarMessage)
+                    showSnackbar = false
+                }
             }
         }
     }
