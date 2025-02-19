@@ -10,7 +10,7 @@ import com.example.proyectofacturasintermodular.viewmodel.*
 
 @Composable
 fun NavigationWrapper(navHostController: NavHostController, billViewModel: BillViewModel,authViewModel:AuthViewModel) {
-    NavHost(navController = navHostController, startDestination = "addBill") {
+    NavHost(navController = navHostController, startDestination = "loginScreen") {
         composable("loginScreen") { LoginScreen(navHostController, authViewModel) }
         composable("addBill") { AddBill(navHostController, billViewModel) }
     }
