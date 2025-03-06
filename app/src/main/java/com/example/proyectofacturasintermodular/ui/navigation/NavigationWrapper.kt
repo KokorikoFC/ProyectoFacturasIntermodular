@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.proyectofacturasintermodular.ui.AddBill
+import com.example.proyectofacturasintermodular.ui.screens.AddBill
 import com.example.proyectofacturasintermodular.viewmodel.*
 
 @Composable

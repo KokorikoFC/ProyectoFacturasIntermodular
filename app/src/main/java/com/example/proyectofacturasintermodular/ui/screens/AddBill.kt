@@ -1,4 +1,4 @@
-package com.example.proyectofacturasintermodular.ui
+package com.example.proyectofacturasintermodular.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,12 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.proyectofacturasintermodular.data.model.Bill
-import com.example.proyectofacturasintermodular.data.repository.BillRepository
 import com.example.proyectofacturasintermodular.viewmodel.BillViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -38,7 +35,7 @@ import com.example.proyectofacturasintermodular.R // Asegúrate de que R se impo
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.core.app.NotificationCompat.Style
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.proyectofacturasintermodular.ui.theme.Beige
 import com.example.proyectofacturasintermodular.ui.theme.Gray
 import com.example.proyectofacturasintermodular.ui.theme.Red
@@ -254,7 +251,8 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                             StyledOutlinedTextField(
                                 value = baseImponible,
                                 onValueChange = { baseImponible = it },
-                                placeholder = { Text("Base imponible:") }
+                                placeholder = { Text("Base imponible:") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                             ExposedDropdownMenuBox(
                                 expanded = expandedIVA,
@@ -303,7 +301,8 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                             StyledOutlinedTextField(
                                 value = irpf,
                                 onValueChange = { irpf = it },
-                                placeholder = { Text("IRPF:") }
+                                placeholder = { Text("IRPF:") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                             Text(
                                 "Total: ${String.format("%.2f", total)} €",
@@ -347,7 +346,8 @@ fun AddBill(navHostController: NavHostController, billViewModel: BillViewModel) 
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(20.dp).fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Red)
             ) {
                 Text("Añadir Factura", color = Color.White)
             }
