@@ -20,8 +20,8 @@ Designed with scalability and adaptability in mind, Facturador serves as a centr
 
 Facturador is built using the following technologies:
 
-**Frontend:** Kotlin with Jetpack Compose
-**Backend & Database:** Firebase (Firestore and Authentication)
+* **Frontend:** `Kotlin` with `Jetpack Compose`
+* **Backend & Database:** `Firebase` (Firestore and Authentication)
 
 ## Screens
 
