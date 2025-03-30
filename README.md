@@ -25,11 +25,11 @@ Facturador is built using the following technologies:
 
 ## Screens
 
-1. **Inicio de Sesión:** Pantalla para que los usuarios se autentiquen y accedan a la aplicación.
+1. **Login:** Screen for users to authenticate and access the application.
 
    <img src="app/src/main/res/drawable/login.jpg" alt="Login Screen" width="150">
 
-2. **Formulario para facturas emitidas:** Pantalla con un formulario para poder rellenar con los datos de las facturas. Al introducir la base imponible, se puede elegir el tipo de IVA y el IRPF, calculando el total de forma automática e instantánea. Permite guardar o cancelar la creación de la factura.
+2. **Issued Invoice Form:** Screen with a form to fill in the details of issued invoices. When entering the taxable base, you can choose the VAT type and the personal income tax (IRPF), and the total is calculated automatically and instantly. 
 
    <img src="app/src/main/res/drawable/factura1.jpg" alt="Issued Invoice Form" width="150">
 
@@ -37,6 +37,6 @@ Facturador is built using the following technologies:
 
    <img src="app/src/main/res/drawable/factura4.jpg" alt="Issued Invoice Form" width="150">
 
-3. **Formulario para facturas recibidas:** Igual que el formulario de emitida, con la diferencia de que tienes que rellenar a mano el campo del número de factura. Permite guardar o cancelar la creación de la factura.
+3. **Received Invoice Form:** Same as the issued invoice form, with the difference that you have to manually fill in the invoice number field.
 
    <img src="app/src/main/res/drawable/factura3.jpg" alt="Received Invoice Form" width="150">
