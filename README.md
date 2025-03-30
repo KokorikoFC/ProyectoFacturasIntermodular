@@ -16,7 +16,7 @@ Designed with scalability and adaptability in mind, Facturador serves as a centr
 * **Real-time Synchronization:** Keep your data synchronized with the web platform and dashboard thanks to Firebase integration.
 * **Intuitive Interface:** Clean and easy-to-use design, developed with Jetpack Compose for a fluid user experience.
 
-## Technologies
+## Technologies 
 
 Facturador is built using the following technologies:
 
@@ -25,11 +25,18 @@ Facturador is built using the following technologies:
 
 ## Screens
 
-**Login:** Screen for users to authenticate and access the application.
-<img src="app/src/main/res/drawable/login.jpg" alt="Login Screen" width="150">
-**Issued Invoice Form:** Screen with a form to fill in the details of issued invoices. When entering the taxable base, you can choose the VAT type and the personal income tax (IRPF), and the total is calculated automatically and instantly. Allows saving or canceling the invoice creation.
-<img src="app/src/main/res/drawable/factura1.jpg" alt="Issued Invoice Form" width="150">
-<img src="app/src/main/res/drawable/factura2.jpg" alt="Issued Invoice Form" width="150">
-<img src="app/src/main/res/drawable/factura4.jpg" alt="Issued Invoice Form" width="150">
-**Received Invoice Form:** Same as the issued invoice form, with the difference that you have to manually fill in the invoice number field. Allows saving or canceling the invoice creation.
-<img src="app/src/main/res/drawable/factura3.jpg" alt="Received Invoice Form" width="150">
+1. **Inicio de Sesión:** Pantalla para que los usuarios se autentiquen y accedan a la aplicación.
+
+   <img src="app/src/main/res/drawable/login.jpg" alt="Login Screen" width="150">
+
+2. **Formulario para facturas emitidas:** Pantalla con un formulario para poder rellenar con los datos de las facturas. Al introducir la base imponible, se puede elegir el tipo de IVA y el IRPF, calculando el total de forma automática e instantánea. Permite guardar o cancelar la creación de la factura.
+
+   <img src="app/src/main/res/drawable/factura1.jpg" alt="Issued Invoice Form" width="150">
+
+   <img src="app/src/main/res/drawable/factura2.jpg" alt="Issued Invoice Form" width="150">
+
+   <img src="app/src/main/res/drawable/factura4.jpg" alt="Issued Invoice Form" width="150">
+
+3. **Formulario para facturas recibidas:** Igual que el formulario de emitida, con la diferencia de que tienes que rellenar a mano el campo del número de factura. Permite guardar o cancelar la creación de la factura.
+
+   <img src="app/src/main/res/drawable/factura3.jpg" alt="Received Invoice Form" width="150">
